@@ -6,6 +6,7 @@ import requests
 import json
 from datetime import datetime as dt
 from django.utils.timezone import utc
+from django.db.models import Q
 
 external_api = ""
 parameters = { "username" : "", "format":"json", "api_key":""  }
@@ -40,17 +41,26 @@ class Command(BaseCommand):
 
 		self.__get_accounts__()
 
-#		self.__import_new_accounts_from_third_party()
+		self.__import_new_accounts_from_third_party()
 
 		self.__send_deleted_accounts__()
 
-#		self.__send_new_accounts_to_third_party__()
+		self.__send_new_accounts_to_third_party__()
+
+		self.__update_sent_accounts_ids__()
+
+
+		self.stdout.write( (10*"*") + "done" + os.linesep)
 
 		return
 
-	def __send_new_accounts_to_third_party__(self):
-		accounts = Account.objects.filter(synched=False,imported=False,deleted=False)
+	def __get_new_accounts_from_db__(self,synched=False,imported=False,deleted=False,*args,**kwargs):
+		return Account.admin_objects.filter(synched=synched,imported=imported,deleted=deleted,*args,**kwargs)
 
+	def __send_new_accounts_to_third_party__(self):
+		accounts = self.__get_new_accounts_from_db__()
+
+		self.send_new_accounts = []
 
 		for acc in accounts:
 			result,status = self.__send_new_account__(acc)
@@ -58,13 +68,44 @@ class Command(BaseCommand):
 			if result:
 				self.stdout.write(('Successfully synched account "%s"' + os.linesep) % acc)
 				acc.synched = True
+				self.send_new_accounts.append(acc.id)
 				acc.save()
 			else:
 				self.stdout.write(("Synch Failed for %s with %s"+os.linesep) % (acc,status))
 
 		print_seperator()
 
-		self.stdout.write( "done" )
+
+
+	def __update_sent_accounts_ids__(self):
+
+		print_seperator()
+
+		accounts = Account.admin_objects.filter(Q(id__in=self.send_new_accounts) | Q(external_id=0))
+
+
+		if len(accounts) > 0:
+			print "Update recently inserted Accounts ids with external ids"
+			# re-request accounts from the API to update the values of our requests. ( Find their external_ids )
+			self.__get_accounts__()
+		else:
+			print "No new accounts sent. No need to look for external ids"
+			return
+
+
+
+		for acc in accounts:
+			account_lead = self.users_data.get(acc.email)
+			if account_lead is None:
+				print "Pass %s - %s Not refreshed yet on API" % (acc.email,acc.id)
+				# damn records cache probably preventing new records to sent
+				continue
+
+			id = self.__extract_account_id__(account_lead.get("resource_uri",None))
+
+			if id is not None:
+				acc.external_id = id
+				acc.save()
 
 	def __send_deleted_accounts__(self):
 		"""
@@ -72,27 +113,30 @@ class Command(BaseCommand):
 		and send them to the Third Party API if they still exists in their database
 		"""
 		deleted_accounts = Account.admin_objects.filter(deleted=True,delete_synced=False,imported=False,synched=True)
+		print "Found %d accounts to be deleted " % len(deleted_accounts)
 
 		for acc in deleted_accounts:
 			print "Deleted: %s " % acc
 			del_acc_email = acc.email
-			if del_acc_email in self.users_emails:
+			if del_acc_email in self.users_emails and acc.external_id is not 0:
 				print "Account exists in third party %s " % del_acc_email
 				self.__send_deleted_account_to_api__(acc)
-		pass
+			else:
+				print "Account does not exist in the API anymore or external id(%s) is not SET.." % acc.external_id
+
 
 	def __send_deleted_account_to_api__(self,acc):
-		account_data = {"email":acc.email}
+		account_data = {"email":acc.email,"tr_referral":"BahadirFeed","ip_address":"127.0.0.1"}
 
-		r = self.__send_to_api__("delete",data=account_data)
+		r = self.__send_to_api__("delete",data=account_data,url=external_api+("%d/"%acc.external_id))
 
-		if r.status_code in [200,201]:
+		if r.status_code in [200,201,204]:
 			print "Delete succeeded Text:%s " % r.text
 			acc.delete_synced = True
 			acc.save()
 			return True
 		else:
-			print "Delete FAILED Text:%s Code:%s" % (r.text,r.status_code)
+			print "Delete FAILED  Code:%s Text:%s" % (r.text,r.status_code)
 			pass
 
 
@@ -105,7 +149,7 @@ class Command(BaseCommand):
 
 		r = self.__send_to_api__("get",is_json=False)
 
-		print r.json,r.json.__class__
+#		print r.json,r.json.__class__
 		print_seperator()
 		result = r.json
 
@@ -138,7 +182,7 @@ class Command(BaseCommand):
 		Query our database to find the diff of the accounts
 		and send to the third party API
 		"""
-		accounts = Account.objects.filter(email__in=self.users_emails)
+		accounts = Account.admin_objects.filter(email__in=self.users_emails)
 
 		print_seperator()
 
@@ -160,6 +204,15 @@ class Command(BaseCommand):
 			self.__create_new_account__(mig_user_email,mig_user)
 
 
+	def __extract_account_id__(self,resource_uri):
+		"""
+		since we don't know the ID of the account, we manually extract
+		it from the resource uri parameter of the account!
+		"""
+		id = resource_uri.split('/')[-2]
+
+		return int(id)
+
 	def __create_new_account__(self,email,user_data):
 		"""
 		We found a new account that does not exist in our database.
@@ -167,6 +220,8 @@ class Command(BaseCommand):
 		Password is automatically generated for the user.
 		"""
 		try:
+			id = self.__extract_account_id__(user_data["resource_uri"])
+
 			new_user = Account.create_user(email,email,
 										   user_data["first_name"],
 										   user_data["last_name"],
@@ -180,7 +235,8 @@ class Command(BaseCommand):
 								  synched=False,
 								  name = "%s %s" % (user_data["first_name"],user_data["last_name"]),
 								  user = new_user,
-								  imported_date = dt.utcnow().replace(tzinfo=utc)
+								  imported_date = dt.utcnow().replace(tzinfo=utc),
+								  external_id = id
 			)
 
 
@@ -213,11 +269,14 @@ class Command(BaseCommand):
 			print "Code:%s Text:%s Json:%s" % (r.status_code,r.text,r.json)
 			return False,r.status_code
 
-	def __send_to_api__(self,method="get",data=None,is_json=True,**kwargs):
+	def __send_to_api__(self,method="get",data=None,is_json=True,url=None,**kwargs):
+		if url is None:
+			url = external_api
+
 		if is_json:
-			return requests.request(method,external_api,params=parameters,data=json.dumps(data),headers=headers,**kwargs)
+			return requests.request(method,url,params=parameters,data=json.dumps(data),headers=headers,**kwargs)
 		else:
-			return requests.request(method,external_api,params=parameters,data=data,**kwargs)
+			return requests.request(method,url,params=parameters,data=data,**kwargs)
 
 def print_seperator():
 	print 30 * "#"

@@ -4,10 +4,13 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.models import User
 from account.models import Account
-
+import logging
 import json
-
 from account.forms import RegistrationForm
+
+
+logger = logging.getLogger(__name__)
+
 def get_client_ip(request):
 	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
 	if x_forwarded_for:
@@ -22,10 +25,17 @@ def account_registration(request):
 
 	if request.method == "POST":
 		form = RegistrationForm(request.POST)
+
+
 		if form.is_valid():
+			password =form.cleaned_data["password"]
+			logger.info( "Password is %s" % password )
+
 			user = Account.create_user(
+				email=form.cleaned_data["email"],
 				username=form.cleaned_data["username"],
-				password=form.cleaned_data["password"]
+				password= password,
+				generate_password=False
 			)
 
 			acc = Account(user=user)

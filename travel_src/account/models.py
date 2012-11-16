@@ -33,6 +33,8 @@ class Account(models.Model):
 	imported = models.BooleanField(blank=False,default=False)
 	imported_date = models.DateTimeField(null=True,blank=True)
 
+	external_id = models.IntegerField(blank=True,null=True,default=0 )
+
 #	active = models.BooleanField(blank=False,default=True)
 
 	# First soft delete, then send to api, and schedule for actual delete.
@@ -55,7 +57,7 @@ class Account(models.Model):
 		self.save()
 
 	@classmethod
-	def create_user(cls,username,email,first_name=None,last_name=None,password=None,generate_password=False):
+	def create_user(cls,username,email,first_name='',last_name='',password=None,generate_password=False):
 
 		if len(username) > 30:
 			username = username[:30]
@@ -64,8 +66,10 @@ class Account(models.Model):
 
 		if generate_password:
 			user.set_password(random_password())
-		elif not generate_password and password is None:
-			raise ValueError("Password is missing.Either set generate_password True to create a random one or supply a password")
+#		elif (not generate_password) and password is None:
+#			raise ValueError("Password is missing.Either set generate_password True to create a random one or supply a password")
+#
+		user.set_password(password)
 
 		try:
 			user.save()
