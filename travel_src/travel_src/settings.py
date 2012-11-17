@@ -118,6 +118,7 @@ INSTALLED_APPS = (
 #    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'django_admin_bootstrapped',
     'django.contrib.admin',
 	'django_cron',
 	'haystack',

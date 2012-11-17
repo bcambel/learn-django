@@ -1,20 +1,21 @@
 {%  extends "base.html" %}
 
 {% block content %}
-	<div class="area span8" >
+	<div class="area span8" style="position:relative;">
 
 	<form action="/login/" method="post" class="form-horizontal" data-remote="true">
 		{% csrf_token %}
-		<div class="float-right">
+
+		<div class="" style="position:absolute;right:10px;top:15px">
 			Don't have an account ? <a href="/register/">
 			Register
 		    </a>
 		</div>
 
-		<legend class="" style="padding-left:20px;">Login</legend>
+		<legend class="" >&nbsp;Login</legend>
 
-		<div class="info-container row offset1">
-			<div class="info alert span7" style="display: none;">
+		<div class="row offset1" style="margin-left:10px;margin-right: 10px;">
+			<div class="info alert" style="display: none;">
 
 			</div>
 		</div>
@@ -39,9 +40,9 @@
 		</div>
 		<div class="control-group">
 			<div class="controls">
-				<label class="checkbox">
-					<input type="checkbox"> Remember me
-				</label>
+{#				<label class="checkbox">#}
+{#					<input type="checkbox"> Remember me#}
+{#				</label>#}
 				<button type="submit" class="btn" id="login_btn"><i class="icon-unlock"></i>  Sign in</button>
 			</div>
 		</div>
@@ -81,7 +82,10 @@
 					if(false === data.success){
 						$info.html(data.reason).addClass("alert-error").removeClass("alert-success");
 					}else{
-						$info.html(data.reason).addClass("alert-success").removeClass("alert-error");
+						$info.html("Logged In! Redirecting...").addClass("alert-success").removeClass("alert-error");
+						window.setTimeout(function(){
+							document.location = "/profile/";
+						},2000);
 					}
 					$info.show();
 

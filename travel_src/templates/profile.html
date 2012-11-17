@@ -4,13 +4,18 @@
 
 	<div class="hero-unit">
 		<h1>Hello, {{ acc.name }}</h1>
-		<p>
+		<hr />
+		<p style="font-size:24px;">
 			We don't have that much functionality in our system. But we know your email address.
-			<code>{{ acc.email }}</code> We're going to send lots of spam email to sell you something, maybe.
+			<code style="font-size:20px;">{{ acc.email }}</code> We're going to send lots of spam email to sell you something, maybe.
 		</p>
+		<hr />
 		<p>
-			<a class="btn btn-primary btn-large" href="http://www.youtube.com/watch?feature=player_detailpage&v=dMH0bHeiRNg#t=77s">
+			<a class="btn btn-primary btn-large" target="_blank" href="http://www.youtube.com/watch?feature=player_detailpage&v=dMH0bHeiRNg#t=77s">
 				Think you can dance ?
+			</a> or
+			<a class="btn btn-large btn-danger" target="_blank" href="http://www.youtube.com/watch?feature=player_detailpage&v=N3hSHUV4iXE#t=106s">
+                Troll your parents with a $1M question
 			</a>
 		</p>
 	</div>

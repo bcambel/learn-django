@@ -31,12 +31,17 @@ def account_registration(request):
 
 
 		if form.is_valid():
-			password =form.cleaned_data["password"]
+			password = form.cleaned_data["password"]
 			logger.info( "Password is %s" % password )
 
-			user = Account.create_user(
+			username = form.cleaned_data["email"]
+
+			if len(username)>30:
+				username = username[:30]
+
+			user,success = Account.create_user(
 				email=form.cleaned_data["email"],
-				username=form.cleaned_data["username"],
+				username= username,
 				password= password,
 				generate_password=False
 			)
@@ -52,6 +57,7 @@ def account_registration(request):
 
 			return HttpResponseRedirect("/profile/")
 		else:
+
 			response_data = {
 				"success":False,
 				"errors": [(k, v[0]) for k, v in form.errors.items()]
@@ -77,24 +83,37 @@ def login_view(request):
 		password = request.POST["password"]
 		email =request.POST["email"]
 
+		def account_not_exist_email_password_wrong():
+			result['reason'] = "Email address or password is wrong."
+			print "Your username and password were incorrect."
+
 		if password is None or len(password) <= 0:
 			result['reason'] = "Please type in your password"
 		elif email is None or len(email) <= 0:
 			result['reason'] = "Please type in your email"
 		else:
-			user = authenticate(username=email, password=password)
-			if user is not None:
-				if user.is_active:
-	#					login(request,user)
-					result['success'] = True
-					print "You provided a correct username and password!"
-				else:
-					result['reason'] = "Account disabled"
-					print "Your account has been disabled!"
-			else:
-				result['reason'] = "Email address or password is wrong."
-				print "Your username and password were incorrect."
+			account = None
+			try:
+				account = Account.admin_objects.get(email=email)
+			except Account.DoesNotExist:
+				account_not_exist_email_password_wrong()
 
+			if account is not None:
+				user = authenticate(username=email, password=password)
+				if user is not None:
+					if user.is_active:
+
+		#					login(request,user)
+						request.session[session_account_id_key] = account.id
+						result['success'] = True
+						print "You provided a correct username and password!"
+					else:
+						result['reason'] = "Account disabled"
+						print "Your account has been disabled!"
+				else:
+					account_not_exist_email_password_wrong()
+			else:
+				account_not_exist_email_password_wrong()
 
 		return HttpResponse(json.dumps(result),mimetype="application/json")
 
@@ -112,3 +131,6 @@ def profile_view(request):
 		"acc":acc
 	}
 	return render_to_response("profile.html",context,context_instance=RequestContext(request))
+
+def home_view(request):
+	return render_to_response("home.html",{},context_instance=RequestContext(request))

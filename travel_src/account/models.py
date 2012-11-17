@@ -2,10 +2,9 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.contrib import admin
 from django.contrib.auth.models import User
-from datetime import datetime as dt
-import os
 import string
 import random
+import sys
 
 class AccountManager(models.Manager):
 	def get_query_set(self,*args,**kwargs):
@@ -16,7 +15,6 @@ class AdminAccountManager(models.Manager):
 
 def random_password(size=20, chars=string.ascii_uppercase + string.digits):
 	return ''.join(random.choice(chars) for x in range(size))
-
 
 class Account(models.Model):
 
@@ -59,6 +57,7 @@ class Account(models.Model):
 	@classmethod
 	def create_user(cls,username,email,first_name='',last_name='',password=None,generate_password=False):
 
+
 		if len(username) > 30:
 			username = username[:30]
 
@@ -69,7 +68,10 @@ class Account(models.Model):
 #		elif (not generate_password) and password is None:
 #			raise ValueError("Password is missing.Either set generate_password True to create a random one or supply a password")
 #
-		user.set_password(password)
+		else:
+			user.set_password(password)
+			print >>sys.stderr, password
+			print >>sys.stderr, user.password
 
 		try:
 			user.save()

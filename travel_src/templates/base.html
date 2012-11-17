@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+{#	<link href="//netdna.bootstrapcdn.com/bootswatch/2.1.1/slate/bootstrap.min.css" rel="stylesheet">#}
 	<link href="//netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -27,7 +29,19 @@
 	</style>
 </head>
 <body>
+
 <div class="container">
+	<div class="navbar">
+		<div class="navbar-inner">
+			<a class="brand" href="#">TravelBird(ish)</a>
+			<ul class="nav">
+				<li><a href="/">Home</a></li>
+				<li><a href="/register/">Register</a></li>
+				<li><a href="/login/">Login</a></li>
+				<li><a href="/profile/">Profile</a></li>
+			</ul>
+		</div>
+	</div>
     <div class="row-fluid">
 	    <div class="span10">
             {% block content %}
@@ -40,7 +54,12 @@
 
 {% endblock %}
 <script type="text/javascript">
+	function capitalise(str)
+	{
+		return str.charAt(0).toUpperCase() + str.slice(1);
+	}
 (function($){
+
     $(function(){
         var formData,action,$form;
 

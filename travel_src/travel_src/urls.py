@@ -11,6 +11,7 @@ urlpatterns = patterns('',
 	(r"^register/?$","account.views.account_registration"),
 	(r"^profile/?$","account.views.profile_view"),
 	(r"^login/?$","account.views.login_view"),
+	(r"^/?$","account.views.home_view"),
 	(r'^search/', include('haystack.urls')),
 )
 
