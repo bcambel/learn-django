@@ -1,0 +1,94 @@
+{%  extends "base.html" %}
+
+{% block content %}
+	<div class="area span8" >
+
+	<form action="/login/" method="post" class="form-horizontal" data-remote="true">
+		{% csrf_token %}
+		<div class="float-right">
+			Don't have an account ? <a href="/register/">
+			Register
+		    </a>
+		</div>
+
+		<legend class="" style="padding-left:20px;">Login</legend>
+
+		<div class="info-container row offset1">
+			<div class="info alert span7" style="display: none;">
+
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="email">Email</label>
+			<div class="controls">
+				<input type="text" id="email" name="email" placeholder="Email"/>
+
+
+
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="password">Password</label>
+			<div class="controls">
+				<input type="password" id="password" name="password" placeholder="Password"/>
+				<div class="help-inline">
+                    <a href="#forgot_password" class="" data-toggle="modal">Forgot Password?</a>
+				</div>
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<label class="checkbox">
+					<input type="checkbox"> Remember me
+				</label>
+				<button type="submit" class="btn" id="login_btn"><i class="icon-unlock"></i>  Sign in</button>
+			</div>
+		</div>
+	</form>
+	</div>
+{%  endblock %}
+
+{% block page_bottom %}
+	<div id="forgot_password" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Forgot your password ?</h3>
+		</div>
+		<div class="modal-body">
+			<p>Sorry we are a bit lazy. In the future, Please typein your email address to reset your password.</p>
+			<input type="text" id="forgot_pass_email" name="forgot_pass_email" />
+
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn float-left">Close</a>
+{#			<a href="#" class="btn btn-primary">Reset Password</a>#}
+		</div>
+	</div>
+
+
+{%  endblock %}
+
+{%  block js %}
+        <script type="text/javascript">
+        (function($){
+			$(function(){
+				var $info = $(".info"),$btn=$("#login_btn");
+                $info.hide();
+
+				$("form").bind("completed",function(evt,data){
+
+					if(false === data.success){
+						$info.html(data.reason).addClass("alert-error").removeClass("alert-success");
+					}else{
+						$info.html(data.reason).addClass("alert-success").removeClass("alert-error");
+					}
+					$info.show();
+
+					debugger;
+				});
+			});
+
+        })(jQuery);
+	</script>
+{%  endblock %}

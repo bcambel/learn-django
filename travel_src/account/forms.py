@@ -26,6 +26,13 @@ class RegistrationForm(ModelForm):
 	def clean_password(self):
 		password = self.cleaned_data["password"]
 
+#class LoginForm(ModelForm):
+#	email 	= forms.EmailField(label=(u"Email Address"))
+#	password = forms.CharField(label=(u"Password"))#,widget=forms.PasswordInputWidget(render_value=False))
+#
+#	class Meta:
+#		model = User
+
 
 
 	

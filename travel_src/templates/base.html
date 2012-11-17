@@ -2,7 +2,7 @@
 <html>
 <head>
 	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
-
+	<link href="//netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
@@ -10,6 +10,19 @@
 	<style>
 		.container{
 			margin-top:50px;
+		}
+		.float-right{float:right}
+		.float-left{float:left}
+		.area{
+			position: relative;
+			margin: 5px 0;
+{#			padding: 39px 19px 14px;#}
+		    padding-top:5px;
+			background-color: white;
+			border: 1px solid rgb(221, 221, 221);
+			-webkit-border-radius: 4px;
+			-moz-border-radius: 4px;
+			border-radius: 4px;
 		}
 	</style>
 </head>
@@ -23,10 +36,34 @@
 		</div>
     </div>
 </div>
+{% block page_bottom %}
+
+{% endblock %}
 <script type="text/javascript">
+(function($){
+    $(function(){
+        var formData,action,$form;
+
+        $(document).on("submit",'form[data-remote="true"]',function(evt){
+            evt.preventDefault();evt.stopPropagation();
+			$form = $(this)
+            formData = $form.serialize();
+            action = $form.attr("action");
+            $.post( action, formData , function(data){
+				$form.trigger("completed",[data]);
+                debugger;
+            }).error(function(data,error){
+                         debugger;
+                     });
+            debugger;
+        });
+    });
+})(jQuery);
+
+
+</script>
 {%  block js %}
 
 {%  endblock %}
-</script>
 </body>
 </html>

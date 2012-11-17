@@ -10,7 +10,7 @@
 		{% endif %}
 	    <div class="registration">
 			<div class="control-group">
-				<label for="username">Username</label>
+				<label class="control-label" for="username">Username</label>
 				<div class="controls">
 					{{ form.username}}
 					{% if form.username.errors %}
@@ -21,7 +21,7 @@
 				</div>
 			</div>
 			<div class="control-group">
-				<label for="email">Email</label>
+				<label class="control-label" for="email">Email</label>
 				<div class="controls">
 				{{ form.email }}
 					{% if form.email.errors %}
@@ -32,14 +32,14 @@
 				</div>
 			</div>
 			<div class="control-group">
-				<label for="password">Password</label>
+				<label class="control-label" for="password">Password</label>
 				<div class="controls">
 				{{ form.password }}
 					</div>
 			</div>
 
 			<div class="control-group">
-				<label for="name">Name</label>
+				<label class="control-label" for="name">Name</label>
 				<div class="controls">
 				{{ form.name }}
 					</div>
@@ -53,17 +53,5 @@
 
 {%  endblock %}
 {% block js %}
-    $(function(){
-        $(document).on("submit",'form[data-remote="true"]',function(evt){
-            evt.preventDefault();evt.stopPropagation();
-	        formData = $(this).serialize();
-	        action = $(this).attr("action");
-	        $.post( action, formData , function(data){
-                debugger;
-	        }).error(function(data,error){
-                debugger;
-	        });
-	        debugger;
-        });
-	});
+
 {%  endblock %}
