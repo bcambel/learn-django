@@ -258,7 +258,7 @@ class Command(BaseCommand):
 
 	def __send_new_account_to_api__(self,account_data):
 
-		r = self.__send_to_api__(data=account_data)
+		r = self.__send_to_api__(method="post",data=account_data)
 
 		if r.status_code in [200,201]:
 			print "{0}Success{0}".format( 10 * "#")
@@ -272,6 +272,9 @@ class Command(BaseCommand):
 	def __send_to_api__(self,method="get",data=None,is_json=True,url=None,**kwargs):
 		if url is None:
 			url = external_api
+
+		parameters["_ts"] = dt.utcnow().strftime("%s")
+
 
 		if is_json:
 			return requests.request(method,url,params=parameters,data=json.dumps(data),headers=headers,**kwargs)
