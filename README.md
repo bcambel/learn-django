@@ -7,17 +7,28 @@ requirements.txt file contains all the necessary dependencies
 
 Features
 ----------
+* Bootstrap front-end and Django backend ( via `django_admin_bootstrapped` )
+* Uses PostgreSQL db backend
 * AJAX login & registration
 * Django administration
 * Haystack with ElasticSearch Backend
-* Tastypie API.
-* Search via API on ex: http://localhost:8000/api/v1/account/search/?q=john@doe.com&format=json&username=travelbird&api_key=<api_key>
+* Tastypie API to enable create & delete accounts
+* Soft deletes through Django Admin UI. All the records are filtered out automatically.
+* Talks with TravelBird API to send new records and deleted
+
+* Search via API on ex: 
+	```http://localhost:8000/api/v1/account/search/?q=john@doe.com&format=json&username=travelbird&api_key=<api_key>```
+
+Future implementation
+--------------
+* Better exception handling
+* Implement search on front end
 
 API via Tastypie 
 ----------------
 if http is installed run the following shell command
 
-`http POST http://localhost:8000/api/v1/account/\?format\=json\&username\=travelbird\&api_key\=<api_key> email=john@doe.com username=johndoer synched=False imported=True deleted=False password=1234 external_id=-4`
+```http POST http://localhost:8000/api/v1/account/\?format\=json\&username\=travelbird\&api_key\=<api_key> email=john@doe.com username=johndoer synched=False imported=True deleted=False password=1234 external_id=-4```
 
 The following HTTP Response will be generated
 ```
