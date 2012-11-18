@@ -8,6 +8,9 @@ from account.models import Account
 class AccountIndex(indexes.SearchIndex):
 	text = indexes.CharField(document=True, use_template=True)
 
+	def get_model(self):
+		return Account
+
 	def prepare(self,obj):
 		self.prepared_data = super(AccountIndex,self).prepare(obj)
 		self.prepared_data["text"] = obj.email

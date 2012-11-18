@@ -163,7 +163,7 @@ HAYSTACK_CONNECTIONS = {
 		'INDEX_NAME': 'haystack',
 		},
 	}
-HAYSTACK_SITECONF='search_sites'
+HAYSTACK_SITECONF='account.search_indexes'
 HAYSTACK_SEARCH_ENGINE = 'simple'
 
 PASSWORD_HASHERS = (
