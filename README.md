@@ -15,10 +15,10 @@ Features
 * Tastypie API to enable create & delete accounts
 * Soft deletes through Django Admin UI. All the records are filtered out automatically.
 * Talks with TravelBird API to send new records and deleted ones via Django Command
-``` python manage.py synch_accounts```
+` python manage.py synch_accounts`
 
 * Search via API on ex: 
-```http://localhost:8000/api/v1/account/search/?q=john@doe.com&format=json&username=travelbird&api_key=<api_key>```
+`http://localhost:8000/api/v1/account/search/?q=john@doe.com&format=json&username=travelbird&api_key=<api_key>`
 
 Future implementation
 --------------
