@@ -4,7 +4,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Bahadir Cambel', 'bcambel@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -122,9 +122,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 	'django_cron',
 	'haystack',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
-	'account',
+    'account',
 	'tastypie',
 )
 
