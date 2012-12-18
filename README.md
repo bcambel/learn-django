@@ -1,7 +1,6 @@
-TravelBird
-==========
 
-Having fun with Django &amp; Postgres and getting a new awesome job
+
+Having fun with Django &amp; Postgres
 
 requirements.txt file contains all the necessary dependencies
 
@@ -14,11 +13,11 @@ Features
 * Haystack with ElasticSearch Backend
 * Tastypie API to enable create & delete accounts
 * Soft deletes through Django Admin UI. All the records are filtered out automatically.
-* Talks with TravelBird API to send new records and deleted ones via Django Command
+* Talks with an API to send new records and deleted ones via Django Command
 ` python manage.py synch_accounts`
 
 * Search via API on ex: 
-`http://localhost:8000/api/v1/account/search/?q=john@doe.com&format=json&username=travelbird&api_key=<api_key>`
+`http://localhost:8000/api/v1/account/search/?q=john@doe.com&format=json&username=<username>&api_key=<api_key>`
 
 Future implementation
 --------------
@@ -29,7 +28,7 @@ API via Tastypie
 ----------------
 if http is installed run the following shell command
 
-```http POST http://localhost:8000/api/v1/account/\?format\=json\&username\=travelbird\&api_key\=<api_key> email=john@doe.com username=johndoer synched=False imported=True deleted=False password=1234 external_id=-4```
+```http POST http://localhost:8000/api/v1/account/\?format\=json\&username\=bcambel\&api_key\=<api_key> email=john@doe.com username=johndoer synched=False imported=True deleted=False password=1234 external_id=-4```
 
 The following HTTP Response will be generated
 ```
