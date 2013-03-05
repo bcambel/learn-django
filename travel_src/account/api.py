@@ -100,10 +100,7 @@ class AccountResource(ModelResource):
 		return self.create_response(request, object_list)
 
 
-"""
-To user the api request the following URL or your appropriate record.
-http://localhost:8000/api/v1/account/?format=json&username=travelbird&api_key=10201b8d5d67059eac10d43814e465c7dcde05e1
-"""
+
 
 def generate():
 	api_key = ApiKey.objects.get_or_create(user=someuser)
